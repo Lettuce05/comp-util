@@ -4,7 +4,7 @@ import {AppState} from '../../main'
 export default function LL() {
   const {page} = useContext(AppState);
   return (
-    <div className="">
+    <div className="flex flex-1">
       <h1 className="text-3xl font-bold underline font-sans">{page}</h1>
     </div>
   )
