@@ -2,7 +2,7 @@ import Nav from '../Nav/Nav'
 import { useContext } from 'preact/hooks'
 import {AppState} from '../../main'
 
-export default function LL() {
+export default function First() {
   const {page} = useContext(AppState);
   return (
     <div>
