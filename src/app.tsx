@@ -1,6 +1,7 @@
 import { useContext } from 'preact/hooks'
 import LL from './components/LL/LL'
 import First from './components/First/First'
+import NavLayout from './components/NavLayout/NavLayout'
 import {AppState} from './main'
 import {pages} from './types'
 
@@ -9,11 +10,19 @@ export function App() {
  
  if (page == pages.FIRST) {
     return (
-      <First />
+      <NavLayout>
+        <First />
+      </NavLayout>
     )
   } else if(page == pages.LL) {
     return (
-      <LL />
+      <NavLayout>
+        <LL />
+      </NavLayout>
+    )
+  } else {
+    return (
+      <NavLayout />
     )
   }
 }
