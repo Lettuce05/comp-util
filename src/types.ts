@@ -6,3 +6,9 @@ export const pages = {
     SLR: "SLR(1) Automaton",
     LALR: "LALR(1) Automaton",
 } as const;
+
+export type GRAMMAR_INPUT = {
+  id: string,
+  LH: string,
+  RH: string
+}
