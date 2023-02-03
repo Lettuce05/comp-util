@@ -36,9 +36,13 @@ export default function Grammar() {
   }
 
   return (
-    <div>
+    <div className='max-h-full overflow-y-auto'>
+      <div className='px-2 my-4'>
+        <p><span className='font-bold'>Non-Terminal:</span> must match a [A-Z]+ pattern</p>
+        <p><span className='font-bold'>Terminal:</span> must match a ".+" pattern</p>
+      </div>
       {grammarInput.value.map((input: GRAMMAR_INPUT)=> <GrammarInput key={input.id} input={input} handleInput={handleChange} handleRemove={handleRemove} />)}
-      <button onClick={handleAdd}>Add</button>
+      <button onClick={handleAdd} className='mx-auto block bg-emerald-500 py-2 w-56 rounded-full'>Add</button>
     </div>
   )
 }
