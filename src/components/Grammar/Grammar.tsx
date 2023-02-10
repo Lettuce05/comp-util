@@ -42,7 +42,7 @@ export default function Grammar() {
         <p><span className='font-bold'>Terminal:</span> must match a ".+" pattern</p>
       </div>
       {grammarInput.value.map((input: GRAMMAR_INPUT)=> <GrammarInput key={input.id} input={input} handleInput={handleChange} handleRemove={handleRemove} />)}
-      <button onClick={handleAdd} className='mx-auto block bg-emerald-500 py-2 w-56 rounded-full'>Add</button>
+      <button onClick={handleAdd} className='mx-auto block bg-blue-600 py-2 w-56 rounded-lg'>Add</button>
     </div>
   )
 }
