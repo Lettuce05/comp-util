@@ -4,9 +4,11 @@ import { createState } from './state'
 import { App } from './app'
 import './index.css'
 
-export const AppState = createContext();
+const initialState = createState();
+
+export const AppState = createContext(initialState);
 
 render(
-  <AppState.Provider value={createState()}>
+  <AppState.Provider value={initialState}>
     <App />
   </AppState.Provider>, document.getElementById('app') as HTMLElement)

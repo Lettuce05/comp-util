@@ -35,6 +35,10 @@ export default function Grammar() {
     grammarInput.value = [...grammarInput.value, newGrammarInput]
   }
 
+  function handleSave() {
+   console.log(grammarInput.value) 
+  }
+
   return (
     <div className='max-h-full overflow-y-auto'>
       <div className='px-2 my-4'>
@@ -43,6 +47,7 @@ export default function Grammar() {
       </div>
       {grammarInput.value.map((input: GRAMMAR_INPUT)=> <GrammarInput key={input.id} input={input} handleInput={handleChange} handleRemove={handleRemove} />)}
       <button onClick={handleAdd} className='mx-auto block bg-blue-600 py-2 w-56 rounded-lg'>Add</button>
+      <button onClick={handleSave} className='mx-auto block bg-blue-600 py-2 w-56 rounded-lg'>Save</button>
     </div>
   )
 }
