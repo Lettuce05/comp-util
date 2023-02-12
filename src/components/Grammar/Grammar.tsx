@@ -3,6 +3,7 @@ import { AppState } from "../../main"
 import { GRAMMAR_INPUT } from "../../types"
 import {v4} from 'uuid'
 import GrammarInput from "../GrammarInput/GrammarInput"
+import {default as grammarClass} from "../../utils/Grammar"
 
 export default function Grammar() {
   const {grammarInput} = useContext(AppState)
@@ -36,7 +37,8 @@ export default function Grammar() {
   }
 
   function handleSave() {
-   console.log(grammarInput.value) 
+    let grammarProductions = grammarClass.validateGrammar(grammarInput.value)
+    console.log(grammarProductions) 
   }
 
   return (
