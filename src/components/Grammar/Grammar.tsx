@@ -44,6 +44,7 @@ export default function Grammar() {
       <div className='px-2 my-4'>
         <p><span className='font-bold'>Non-Terminal:</span> must match a [A-Z]+ pattern</p>
         <p><span className='font-bold'>Terminal:</span> must match a ".+" pattern</p>
+        <p><span className='font-bold'>Epsilon:</span> please use ε for any production that needs epsilon</p>
       </div>
       {grammarInput.value.map((input: GRAMMAR_INPUT)=> <GrammarInput key={input.id} input={input} handleInput={handleChange} handleRemove={handleRemove} />)}
       <button onClick={handleAdd} className='mx-auto block bg-blue-600 py-2 w-56 rounded-lg'>Add</button>

@@ -7,8 +7,8 @@ type GrammarInputParam = {
 }
 
 export default function GrammarInput({input, handleInput, handleRemove}: GrammarInputParam) {
-  let lhError = input.LH.trim() ? !Grammar.isNonTerminal(input.LH.trim()) : false;
-  let rhError = input.RH.trim() ? !input.RH.trim().split('|').every((production)=> Grammar.isProduction(production)): false; 
+  let lhError = input.LH.trim() ? !Grammar.isNonTerminal(input.LH.trim()) : true;
+  let rhError = input.RH.trim() ? !input.RH.trim().split('|').every((production)=> Grammar.isProduction(production)): true; 
   return (
     <div className='flex'>
       <input className={`w-40 ${lhError ? 'border-2 border-red-500' : ''}`} name='LH' type='text' value={input.LH} onInput={(e)=>handleInput(input.id, e)} />
