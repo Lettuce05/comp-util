@@ -48,6 +48,7 @@ export default class Grammar {
       }
       let rhProductions = rule.RH.trim().split('|');
       for (const production of rhProductions) {
+        // TODO: Refactor to check each term in production, collect non-terminals and terminals, and give a specific error for empty production
         if (!Grammar.isProduction(production)) {
           return `Rule ${index+1}: production ${production} does not match pattern (Terminal|Non-Terminal)+|Epsilon`
         }
@@ -71,7 +72,9 @@ export default class Grammar {
     } // end of for loop iterating over rules
     
     // TODO: Check if Non-Terminal was used but not defined
+      // NOTE: use collected non-terminals from refactor to check if a non-terminal was used but not defined (check against production.keys (this is all defined non-terminals))
     
+    // TODO: Return a Grammar object instead of a productions Map<string, Set<string>>
     return productions;
 
   } // end of validateGrammar()
