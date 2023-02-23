@@ -50,7 +50,7 @@ export default class Grammar {
       }
       let rhProductions = rule.RH.trim().split('|');
       for (const production of rhProductions) {
-        // TODO: Refactor to check each term in production, collect non-terminals and terminals, and give a specific error for empty production
+        // Check each term in production, collect non-terminals and terminals, and give a specific error for empty production and invalid term
         let terms = production.trim().split(' ').filter(term => term)
 
         if (terms.length < 1) {
@@ -58,7 +58,6 @@ export default class Grammar {
         }
 
         for (const term of terms) {
-          console.log(terms, term);
           if (Grammar.isNonTerminal(term.trim())) {
             usedNonTerminals.add(term.trim());
           } else if (Grammar.isTerminal(term.trim())){
@@ -66,7 +65,7 @@ export default class Grammar {
           } else if (term === Grammar.EPSILON && terms.length > 1) {
             return `Rule ${index+1}: Epsilon must be by itself if used in a Right Hand Side`;
           } else {
-            return `Rule ${index+1}: Right Hand Side "${production}" does not match (Non-Terminal|Terminal)+|Epsilon pattern`
+            return `Rule ${index+1}: Right Hand Side ' ${production} ' does not match (Non-Terminal|Terminal)+|Epsilon pattern`
           }
         }
   
