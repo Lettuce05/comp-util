@@ -53,6 +53,8 @@ export default function Grammar() {
         shown: true,
         message: grammarProductions
       })
+    } else {
+      console.log(grammarProductions);
     } 
   }
 
