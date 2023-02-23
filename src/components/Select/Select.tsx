@@ -19,7 +19,11 @@ export default function Select() {
     )
 }
 
-function SelectItem({value}) {
+type SelectItemProps = {
+  value: string
+}
+
+function SelectItem({value}: SelectItemProps) {
     const {page} = useContext(AppState);
     return (
         <div className="w-60 bg-zinc-200 mr-10 py-2 px-2 cursor-pointer hover:bg-zinc-400"

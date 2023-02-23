@@ -8,13 +8,13 @@ import {pages} from './types'
 export function App() {
  const {page} = useContext(AppState);
  
- if (page == pages.FIRST) {
+ if (page.value === pages.FIRST) {
     return (
       <NavLayout>
         <First />
       </NavLayout>
     )
-  } else if(page == pages.LL) {
+  } else if(page.value === pages.LL) {
     return (
       <NavLayout>
         <LL />

@@ -15,9 +15,14 @@ export default function Grammar() {
 
   function handleChange(id: string, e: Event){
     let grammar = [...grammarInput.value];
+    const target: HTMLInputElement = e.target as HTMLInputElement;
     grammar = grammar.map((input: GRAMMAR_INPUT) => {
-      if (input.id === id){
-        input[e.target.name] = e.target.value
+      if (input.id === id && target){
+        if (target.name === 'LH'){
+          input.LH = target.value;
+        } else if (target.name === 'RH'){
+          input.RH = target.value;
+        }
       }
       return input
     })

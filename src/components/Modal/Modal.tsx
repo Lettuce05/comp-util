@@ -1,6 +1,6 @@
 type ModalPropTypes = {
   shown: boolean,
-  children: any
+  children?: any
 }
 
 export default function Modal({ shown, children }: ModalPropTypes){
