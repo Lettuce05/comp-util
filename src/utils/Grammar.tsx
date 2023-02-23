@@ -32,7 +32,9 @@ export default class Grammar {
 
   static validateGrammar(rules: GRAMMAR_INPUT[]) {
     let productions: Map<string, Set<string>> = new Map();
-    
+    let usedNonTerminals: Set<string> = new Set(); 
+    let usedTerminals: Set<string> = new Set();
+    // iterate through rules
     for (const [index, rule] of rules.entries()) {
       // make sure that LH is not empty
       if (!rule.LH.trim()) {
@@ -49,18 +51,31 @@ export default class Grammar {
       let rhProductions = rule.RH.trim().split('|');
       for (const production of rhProductions) {
         // TODO: Refactor to check each term in production, collect non-terminals and terminals, and give a specific error for empty production
-        if (!Grammar.isProduction(production)) {
-          return `Rule ${index+1}: production ${production} does not match pattern (Terminal|Non-Terminal)+|Epsilon`
+        let terms = production.trim().split(' ').filter(term => term)
+
+        if (terms.length < 1) {
+          return `Rule ${index+1}: There must be no empty Right Hand Sides`;
         }
-        
+
+        for (const term of terms) {
+          console.log(terms, term);
+          if (Grammar.isNonTerminal(term.trim())) {
+            usedNonTerminals.add(term.trim());
+          } else if (Grammar.isTerminal(term.trim())){
+            usedTerminals.add(term.trim());
+          } else if (term === Grammar.EPSILON && terms.length > 1) {
+            return `Rule ${index+1}: Epsilon must be by itself if used in a Right Hand Side`;
+          } else {
+            return `Rule ${index+1}: Right Hand Side "${production}" does not match (Non-Terminal|Terminal)+|Epsilon pattern`
+          }
+        }
+  
         // check if the current LH is already in productions
         if (productions.has(rule.LH.trim())){
-        
           // get the productions for the LH and add the current production to the Set
-          let currProductions: Set<string> = productions.get(rule.LH.trim());
+          let currProductions: Set<string> = productions.get(rule.LH.trim()) || new Set();
           currProductions.add(production.trim())
           productions.set(rule.LH.trim(), currProductions);
-
         } else {
           // create a new entry for the LH with the current production as its initial production
           let newProductions: Set<string> = new Set();
@@ -71,16 +86,24 @@ export default class Grammar {
 
     } // end of for loop iterating over rules
     
-    // TODO: Check if Non-Terminal was used but not defined
-      // NOTE: use collected non-terminals from refactor to check if a non-terminal was used but not defined (check against production.keys (this is all defined non-terminals))
-    
-    // TODO: Return a Grammar object instead of a productions Map<string, Set<string>>
-    return productions;
+    // Check if Non-Terminal was used but not defined
+    const undefinedNonTerminals = new Set([...usedNonTerminals].filter((x) => !productions.has(x)));
+    if (undefinedNonTerminals.size > 0){
+      return `The following Non-Terminals are used without being defined: ${Array.from(undefinedNonTerminals).join(',')}`;
+    }
+    // Grammar is valid so return a new Grammar object
+    return new Grammar(usedTerminals, new Set(productions.keys()), productions);
 
   } // end of validateGrammar()
 
-  terminals: string[] = []
-  nonterminals: string[] = []
-  productions: Map<string, Set<string>> = new Map()
+  terminals: Set<string>
+  nonterminals: Set<string>
+  productions: Map<string, Set<string>>
+
+  constructor(terminals: Set<string>, nonterminals: Set<string>, productions: Map<string, Set<string>>){
+    this.terminals = terminals;
+    this.nonterminals = nonterminals;
+    this.productions = productions;
+  }
 }
 
