@@ -64,7 +64,7 @@ export default class Grammar {
             usedTerminals.add(term.trim());
           } else if (term === Grammar.EPSILON && terms.length > 1) {
             return `Rule ${index+1}: Epsilon must be by itself if used in a Right Hand Side`;
-          } else {
+          } else if (term !== Grammar.EPSILON){
             return `Rule ${index+1}: Right Hand Side '${production}' does not match (Non-Terminal|Terminal)+|Epsilon pattern`
           }
         }
