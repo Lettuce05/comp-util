@@ -7,16 +7,16 @@ import {default as grammarClass} from "../../utils/Grammar"
 import Modal from "../Modal/Modal"
 
 export default function Grammar() {
-  const {grammarInput} = useContext(AppState)
+  const {grammarInput, grammar} = useContext(AppState)
   const [modalState, setModalState] = useState({
     shown: false,
     message: ''
   });
 
   function handleChange(id: string, e: Event){
-    let grammar = [...grammarInput.value];
+    let grammarInputValues = [...grammarInput.value];
     const target: HTMLInputElement = e.target as HTMLInputElement;
-    grammar = grammar.map((input: GRAMMAR_INPUT) => {
+    grammarInputValues = grammarInputValues.map((input: GRAMMAR_INPUT) => {
       if (input.id === id && target){
         if (target.name === 'LH'){
           input.LH = target.value;
@@ -27,13 +27,13 @@ export default function Grammar() {
       return input
     })
 
-    grammarInput.value = grammar;
+    grammarInput.value = grammarInputValues;
   }
 
   function handleRemove(id: string){
-    let grammar = [...grammarInput.value];
-    grammar = grammar.filter((input) => input.id !== id);
-    grammarInput.value = grammar;
+    let grammarInputValues = [...grammarInput.value];
+    grammarInputValues = grammarInputValues.filter((input) => input.id !== id);
+    grammarInput.value = grammarInputValues;
   }
 
   function handleAdd(){
@@ -47,20 +47,20 @@ export default function Grammar() {
   }
 
   function handleSave() {
-    let grammarProductions = grammarClass.validateGrammar(grammarInput.value)
-    if (typeof grammarProductions === 'string'){
+    let validGrammar = grammarClass.validateGrammar(grammarInput.value)
+    if (typeof validGrammar === 'string'){
       setModalState({
         shown: true,
-        message: grammarProductions
+        message: validGrammar
       })
     } else {
-      console.log(grammarProductions);
+      grammar.value = validGrammar;
     } 
   }
 
   return (
-    <div className='max-h-full overflow-y-auto'>
-      <div className='px-2 my-4'>
+    <div className='max-h-full overflow-y-auto px-2 w-96'>
+      <div className='my-4'>
         <p><span className='font-bold'>Non-Terminal:</span> must match a [A-Z]+ pattern</p>
         <p><span className='font-bold'>Terminal:</span> must match a ".+" pattern</p>
         <p><span className='font-bold'>Epsilon:</span> please use ε for any production that needs epsilon</p>

@@ -26,11 +26,11 @@ export default class Grammar {
     return Grammar.NONTERMINAL_PATTERN.test(term)
   }
 
-  static validRH(rh: string) {
+  static validRH(rh: string): boolean {
     return rh.trim().split('|').every((production)=> Grammar.isProduction(production));
   }
 
-  static validateGrammar(rules: GRAMMAR_INPUT[]) {
+  static validateGrammar(rules: GRAMMAR_INPUT[]): string | Grammar {
     let productions: Map<string, Set<string>> = new Map();
     let usedNonTerminals: Set<string> = new Set(); 
     let usedTerminals: Set<string> = new Set();
@@ -94,15 +94,53 @@ export default class Grammar {
     return new Grammar(usedTerminals, new Set(productions.keys()), productions);
 
   } // end of validateGrammar()
+  
+  static getTerms(rhs: string): string[] {
+    return rhs.trim().split(' ').filter(term => term)
+  }
+
+  calculateFirst(rhs: string, firstSet: Set<string>): Set<string> {
+    let terms = Grammar.getTerms(rhs);
+    for (const term of terms){
+      if (Grammar.isTerminal(term.trim()) || term.trim() === Grammar.EPSILON){
+        return firstSet.add(term);
+      } else if (Grammar.isNonTerminal(term.trim())) {
+        let rhss: Set<string> = this.productions.get(term) || new Set();
+        let subFirst: Set<string> = new Set();
+        for (const subRhs of rhss){
+          subFirst = new Set([...subFirst, ...this.calculateFirst(subRhs, subFirst)]);
+        }
+        if (!subFirst.has(Grammar.EPSILON) || terms.lastIndexOf(term) === terms.length-1){
+          firstSet = new Set([...subFirst, ...firstSet]) 
+          return firstSet; 
+        }
+        subFirst.delete(Grammar.EPSILON);
+        firstSet = new Set([...subFirst, ...firstSet])
+      }
+    }
+    return firstSet;
+  }
+
+  getFirsts() {
+    for (const [lh, rhss] of this.productions) {
+      let lhFirst: Set<string> = new Set();
+      for(const rhs of rhss){
+        lhFirst = new Set([...lhFirst, ...this.calculateFirst(rhs, new Set())]);
+      }
+      this.firsts.set(lh, lhFirst);
+    }
+  }
 
   terminals: Set<string>
   nonterminals: Set<string>
   productions: Map<string, Set<string>>
+  firsts: Map<string, Set<String>>
 
   constructor(terminals: Set<string>, nonterminals: Set<string>, productions: Map<string, Set<string>>){
     this.terminals = terminals;
     this.nonterminals = nonterminals;
     this.productions = productions;
+    this.firsts = new Map<string, Set<String>>;
   }
 }
 
