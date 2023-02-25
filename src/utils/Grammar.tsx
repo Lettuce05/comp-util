@@ -99,16 +99,16 @@ export default class Grammar {
     return rhs.trim().split(' ').filter(term => term)
   }
 
-  calculateFirst(lhs: string, rhs: string, firstSet: Set<string>): Set<string> {
+  calculateFirst(lhs: string[], rhs: string, firstSet: Set<string>): Set<string> {
     let terms = Grammar.getTerms(rhs);
     for (const term of terms){
       if (Grammar.isTerminal(term.trim()) || term.trim() === Grammar.EPSILON){
         return firstSet.add(term);
-      } else if (Grammar.isNonTerminal(term.trim()) && term.trim() !== lhs.trim()) {
+      } else if (Grammar.isNonTerminal(term.trim()) && lhs.indexOf(term.trim()) === -1) {
         let rhss: Set<string> = this.productions.get(term.trim()) || new Set();
         let subFirst: Set<string> = new Set();
         for (const subRhs of rhss){
-          subFirst = new Set([...subFirst, ...this.calculateFirst(term.trim(), subRhs, subFirst)]);
+          subFirst = new Set([...subFirst, ...this.calculateFirst([...lhs, term.trim()], subRhs, subFirst)]);
         }
         if (!subFirst.has(Grammar.EPSILON) || terms.lastIndexOf(term) === terms.length-1){
           firstSet = new Set([...subFirst, ...firstSet]) 
@@ -116,7 +116,7 @@ export default class Grammar {
         }
         subFirst.delete(Grammar.EPSILON);
         firstSet = new Set([...subFirst, ...firstSet])
-      } else if (term.trim() === lhs.trim() && !this.firsts.get(lhs)?.has(Grammar.EPSILON)){
+      } else if (lhs.indexOf(term.trim()) > -1 && !this.firsts.get(term.trim())?.has(Grammar.EPSILON)){
         return firstSet;
       }
     }
@@ -128,7 +128,7 @@ export default class Grammar {
     for (const [lh, rhss] of this.productions) {
       let lhFirst: Set<string> = new Set();
       for(const rhs of rhss){
-        let rhsFirst = this.calculateFirst(lh, rhs, new Set());
+        let rhsFirst = this.calculateFirst([lh.trim()], rhs, new Set());
         lhFirst = new Set([...lhFirst, ...rhsFirst]);
         if (this.addSet(this.firsts.get(lh.trim()) ?? new Set(), lhFirst)){
           changed = true;
