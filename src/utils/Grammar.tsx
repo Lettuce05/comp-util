@@ -99,16 +99,16 @@ export default class Grammar {
     return rhs.trim().split(' ').filter(term => term)
   }
 
-  calculateFirst(rhs: string, firstSet: Set<string>): Set<string> {
+  calculateFirst(lhs: string, rhs: string, firstSet: Set<string>): Set<string> {
     let terms = Grammar.getTerms(rhs);
     for (const term of terms){
       if (Grammar.isTerminal(term.trim()) || term.trim() === Grammar.EPSILON){
         return firstSet.add(term);
-      } else if (Grammar.isNonTerminal(term.trim())) {
-        let rhss: Set<string> = this.productions.get(term) || new Set();
+      } else if (Grammar.isNonTerminal(term.trim()) && term.trim() !== lhs.trim()) {
+        let rhss: Set<string> = this.productions.get(term.trim()) || new Set();
         let subFirst: Set<string> = new Set();
         for (const subRhs of rhss){
-          subFirst = new Set([...subFirst, ...this.calculateFirst(subRhs, subFirst)]);
+          subFirst = new Set([...subFirst, ...this.calculateFirst(term.trim(), subRhs, subFirst)]);
         }
         if (!subFirst.has(Grammar.EPSILON) || terms.lastIndexOf(term) === terms.length-1){
           firstSet = new Set([...subFirst, ...firstSet]) 
@@ -116,31 +116,56 @@ export default class Grammar {
         }
         subFirst.delete(Grammar.EPSILON);
         firstSet = new Set([...subFirst, ...firstSet])
+      } else if (term.trim() === lhs.trim() && !this.firsts.get(lhs)?.has(Grammar.EPSILON)){
+        return firstSet;
       }
     }
     return firstSet;
   }
 
   getFirsts() {
+    let changed = false;
     for (const [lh, rhss] of this.productions) {
       let lhFirst: Set<string> = new Set();
       for(const rhs of rhss){
-        lhFirst = new Set([...lhFirst, ...this.calculateFirst(rhs, new Set())]);
+        let rhsFirst = this.calculateFirst(lh, rhs, new Set());
+        lhFirst = new Set([...lhFirst, ...rhsFirst]);
+        if (this.addSet(this.firsts.get(lh.trim()) ?? new Set(), lhFirst)){
+          changed = true;
+        }
       }
       this.firsts.set(lh, lhFirst);
     }
+    if (changed){
+      this.getFirsts()
+    }
+  }
+
+  addSet(s1: Set<string>, s2: Set<string>) {
+    let changed = false;
+    for (const e of s2){
+      if (!s1.has(e)) {
+        s1.add(e);
+        changed = true;
+      }
+    }
+    return changed;
   }
 
   terminals: Set<string>
   nonterminals: Set<string>
   productions: Map<string, Set<string>>
-  firsts: Map<string, Set<String>>
+  firsts: Map<string, Set<string>>
 
   constructor(terminals: Set<string>, nonterminals: Set<string>, productions: Map<string, Set<string>>){
     this.terminals = terminals;
     this.nonterminals = nonterminals;
     this.productions = productions;
-    this.firsts = new Map<string, Set<String>>;
+    let initialfirsts = new Map<string, Set<string>>;
+    nonterminals.forEach(nt => {
+      initialfirsts.set(nt, new Set())
+    });
+    this.firsts = initialfirsts;
   }
 }
 
